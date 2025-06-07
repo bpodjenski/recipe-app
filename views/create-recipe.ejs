@@ -1,35 +1,24 @@
 <!-- views/createRecipe.ejs -->
-<!DOCTYPE html>
-<html lang="en">
-<head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title><%= title %></title>
-  <link rel="stylesheet" href="/styles.css">
-</head>
-<body>
-  <header>
-    <h1>Create a New Recipe</h1>
-    <nav>
-      <a href="/">Home</a>
-      <a href="/search">Search Recipes</a>
-      <a href="/create-recipe">Create a Recipe</a>
-    </nav>
-  </header>
+<h1 class="mb-4">Add a New Recipe</h1>
+<form action="/create" method="POST">
+  <div class="mb-3">
+    <label for="title" class="form-label">Recipe Title</label>
+    <input type="text" class="form-control" id="title" name="title" required />
+  </div>
+  <div class="mb-3">
+    <label for="ingredients" class="form-label">Ingredients</label>
+    <textarea class="form-control" id="ingredients" name="ingredients" rows="3" required></textarea>
+  </div>
+  <div class="mb-3">
+    <label for="instructions" class="form-label">Instructions</label>
+    <textarea class="form-control" id="instructions" name="instructions" rows="5" required></textarea>
+  </div>
+  <button type="submit" class="btn btn-primary">Create Recipe</button>
+</form>
+<!-- <h1>Add a New Recipe</h1>
+<form method="POST" action="/create">
+  <input type="text" name="title" placeholder="Title" required>
+  <textarea name="instructions" placeholder="Instructions" required></textarea>
+  <button type="submit">Create</button>
+</form> -->
 
-  <main>
-    <form action="/create-recipe" method="POST">
-      <label for="name">Recipe Name:</label>
-      <input type="text" id="name" name="name" required>
-
-      <label for="ingredients">Ingredients:</label>
-      <textarea id="ingredients" name="ingredients" required></textarea>
-
-      <label for="instructions">Instructions:</label>
-      <textarea id="instructions" name="instructions" required></textarea>
-
-      <button type="submit">Submit Recipe</button>
-    </form>
-  </main>
-</body>
-</html>
