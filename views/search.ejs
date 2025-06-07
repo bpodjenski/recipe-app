@@ -1,31 +1,32 @@
 <!-- views/search.ejs -->
-<!DOCTYPE html>
-<html lang="en">
-<head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title><%= title %></title>
-  <link rel="stylesheet" href="/styles.css">
-</head>
-<body>
-  <header>
-    <h1>Search Recipes</h1>
-    <nav>
-      <a href="/">Home</a>
-      <a href="/search">Search Recipes</a>
-      <a href="/create-recipe">Create a Recipe</a>
-    </nav>
-  </header>
+<h1 class="mb-4">Search Recipes</h1>
 
-  <main>
-    <form action="/search" method="GET">
-      <input type="text" name="query" placeholder="Search recipes..." required>
-      <button type="submit">Search</button>
-    </form>
+<form action="/search" method="GET" class="mb-4">
+  <div class="input-group">
+    <input
+      type="text"
+      class="form-control"
+      placeholder="Search for a recipe..."
+      name="q"
+      value="<%= typeof query !== 'undefined' ? query : '' %>"
+    />
+    <button class="btn btn-primary" type="submit">Search</button>
+  </div>
+</form>
 
-    <div id="search-results">
-      <!-- Render search results here -->
+<% if (typeof results !== 'undefined') { %>
+  <h2 class="mt-4 mb-3">Results</h2>
+
+  <% if (results.length > 0) { %>
+    <div class="list-group">
+      <% results.forEach(recipe => { %>
+        <a href="/recipe/<%= recipe.id %>" class="list-group-item list-group-item-action">
+          <%= recipe.title %>
+        </a>
+      <% }) %>
     </div>
-  </main>
-</body>
-</html>
+  <% } else { %>
+    <div class="alert alert-warning">No recipes found matching "<%= query %>".</div>
+  <% } %>
+<% } %>
+
