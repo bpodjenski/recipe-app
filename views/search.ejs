@@ -1,12 +1,32 @@
 <!-- views/search.ejs -->
+<h1 class="mb-4">Search Recipes</h1>
 
-<h1>Search Recipes</h1>
-<form method="GET" action="/search">
-  <input type="text" name="q" value="<%= query || '' %>" placeholder="Search for a recipe...">
-  <button type="submit">Search</button>
+<form action="/search" method="GET" class="mb-4">
+  <div class="input-group">
+    <input
+      type="text"
+      class="form-control"
+      placeholder="Search for a recipe..."
+      name="q"
+      value="<%= typeof query !== 'undefined' ? query : '' %>"
+    />
+    <button class="btn btn-primary" type="submit">Search</button>
+  </div>
 </form>
-<ul>
-  <% results.forEach(r => { %>
-    <li><a href="/recipe/<%= r.id %>"><%= r.title %></a></li>
-  <% }) %>
-</ul>
+
+<% if (typeof results !== 'undefined') { %>
+  <h2 class="mt-4 mb-3">Results</h2>
+
+  <% if (results.length > 0) { %>
+    <div class="list-group">
+      <% results.forEach(recipe => { %>
+        <a href="/recipe/<%= recipe.id %>" class="list-group-item list-group-item-action">
+          <%= recipe.title %>
+        </a>
+      <% }) %>
+    </div>
+  <% } else { %>
+    <div class="alert alert-warning">No recipes found matching "<%= query %>".</div>
+  <% } %>
+<% } %>
+
