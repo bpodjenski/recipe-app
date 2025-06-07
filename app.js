@@ -17,5 +17,11 @@ app.set('layout', 'layout');
 
 app.use('/', recipeRoutes);
 
+// initialize sqlite objects
+const { sequelize } = require('./models');
+sequelize.sync().then(() => {
+  console.log('✅ All models synced to the database');
+});
+
 const PORT = 3000;
 app.listen(PORT, () => console.log(`Server running on port ${PORT}`));

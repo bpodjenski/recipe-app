@@ -1,26 +1,29 @@
-// models/recipe.js
-const fs = require('fs');
-const path = require('path');
-const dataFile = path.join(__dirname, '../data/recipes.json');
+// Define the Recipe model
+const { DataTypes } = require('sequelize');
+const sequelize = require('../database');
 
-function load() {
-  if (!fs.existsSync(dataFile)) return [];
-  const raw = fs.readFileSync(dataFile);
-  return JSON.parse(raw);
-}
-
-function save(data) {
-  fs.writeFileSync(dataFile, JSON.stringify(data, null, 2));
-}
-
-module.exports = {
-  getAll: () => load(),
-  getById: (id) => load().find(r => r.id === id),
-  search: (q) => load().filter(r => r.title.toLowerCase().includes(q.toLowerCase())),
-  create: (recipe) => {
-    const recipes = load();
-    recipe.id = Date.now().toString();
-    recipes.push(recipe);
-    save(recipes);
+const Recipe = sequelize.define('Recipe', {
+  name: {
+    type: DataTypes.STRING,
+    allowNull: false
+  },
+  instructions: {
+    type: DataTypes.TEXT,
+    allowNull: false
+  },
+  cookTime: {
+    type: DataTypes.STRING, // e.g. "45 minutes"
+    allowNull: false
+  },
+  notes: {
+    type: DataTypes.TEXT
+  },
+  person: {
+    type: DataTypes.STRING,
+    allowNull: false
   }
-};
+}, {
+  timestamps: true
+});
+
+module.exports = Recipe;

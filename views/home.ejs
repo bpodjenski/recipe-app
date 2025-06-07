@@ -1,17 +1,15 @@
 <!-- views/home.ejs -->
 <h1 class="mb-4">All Recipes</h1>
-<div class="list-group">
-    <h2>HOME PAGE!!!</h2>
-  <!-- <% recipes.forEach(recipe => { %>
-    <a href="/recipe/<%= recipe.id %>" class="list-group-item list-group-item-action">
-      <%= recipe.title %>
-    </a>
-  <% }) %> -->
+<div class="row row-cols-1 row-cols-md-2 g-4">
+  <% recipes.forEach(recipe => { %>
+    <div class="col">
+      <div class="card">
+        <div class="card-body">
+          <h5 class="card-title"><%= recipe.name %></h5>
+          <p class="card-text">By: <%= recipe.person %></p>
+          <a href="/recipe/<%= recipe.id %>" class="btn btn-primary">View Recipe</a>
+        </div>
+      </div>
+    </div>
+  <% }) %>
 </div>
-<!-- <h1>Family Recipes</h1>
-<ul>
-    <h2>HOME PAGE!!!</h2>
-  <% recipes.forEach(r => { %>
-    <li><a href="/recipe/<%= r.id %>"><%= r.title %></a></li>
-  <% }) %> 
-</ul>-->
