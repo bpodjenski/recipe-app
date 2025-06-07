@@ -35,7 +35,7 @@ app.get('/recipe/:id', (req, res) => {
 
 // Route for the create recipe page
 app.get('/create-recipe', (req, res) => {
-  res.render('createRecipe', { title: 'Create a Recipe' });
+  res.render('create-recipe', { title: 'Create a Recipe' });
 });
 
 // Route to handle the creation of a new recipe (post form data)
