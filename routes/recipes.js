@@ -84,7 +84,7 @@ router.get('/create-recipe', (req, res) => {
 
 // POST Create Recipe with Ingredients
 router.post('/create-recipe', upload.single('image'), async (req, res) => {
-  console.log(req.body)
+  // test data persistance
   const { name, instructions, cookTime, notes, person, ingredients } = req.body;
   const imagePath = req.file ? `/uploads/${req.file.filename}` : null;
 
