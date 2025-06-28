@@ -1,10 +1,15 @@
 const { Sequelize } = require('sequelize');
+const path = require('path');
+const isProd = process.env.NODE_ENV === 'production';
 
-// Use SQLite and store data in local file
+const storagePath = isProd
+  ? '/data/recipes.sqlite'
+  : path.join(__dirname, '../data/recipes.sqlite');
+
 const sequelize = new Sequelize({
   dialect: 'sqlite',
-  storage: 'recipes.sqlite',
-  logging: false // optional: hides SQL logs
+  storage: storagePath,
+  logging: false
 });
 
 module.exports = sequelize;
