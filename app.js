@@ -23,5 +23,11 @@ sequelize.sync().then(() => {
   console.log('✅ All models synced to the database');
 });
 
+const uploadDir = process.env.NODE_ENV === 'production'
+  ? '/data/uploads'
+  : path.join(__dirname, 'uploads');
+
+app.use('/uploads', express.static(uploadDir));
+
 const PORT = 3000;
 app.listen(PORT, () => console.log(`Server running on port ${PORT}`));
