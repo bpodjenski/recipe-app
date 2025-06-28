@@ -13,6 +13,9 @@ RUN npm install
 # Step 5: Copy the rest of the app’s code into the container
 COPY . .
 
+# prevent deployments from wiping the volume
+RUN test -f /data/recipes.sqlite || cp /app/seed/recipes.sqlite /data/recipes.sqlite
+
 # Step 6: Expose the port that the app will run on
 EXPOSE 3000
 
