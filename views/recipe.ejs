@@ -1,4 +1,16 @@
 <!-- views/recipe.ejs -->
+
+<div class="d-flex justify-content-center mb-4">
+    <div class="card" style="max-width: 350px; width: 100%;">
+      <% if (recipe.imagePath) { %>
+        <img src="<%= recipe.imagePath %>" alt="<%= recipe.name %>" class="card-img-top rounded" style="max-height: 300px; object-fit: cover;">
+      <% } else { %>
+        <div class="bg-light text-center text-muted p-5 rounded">
+          No image available
+        </div>
+      <% } %>
+    </div>
+  </div>
 <h1><%= recipe.name %></h1>
 <p><strong>By:</strong> <%= recipe.person %></p>
 <p><strong>Cook Time:</strong> <%= recipe.cookTime %></p>

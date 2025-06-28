@@ -2,31 +2,103 @@
 <h1 class="mb-4">Search Recipes</h1>
 
 <form action="/search" method="GET" class="mb-4">
-  <div class="input-group">
-    <input
-      type="text"
-      class="form-control"
-      placeholder="Search for a recipe..."
-      name="q"
-      value="<%= typeof query !== 'undefined' ? query : '' %>"
-    />
-    <button class="btn btn-primary" type="submit">Search</button>
-  </div>
+    <div class="input-group">
+      <input
+        id="live-search"
+        type="text"
+        class="form-control"
+        placeholder="Search for a recipe..."
+        name="q"
+        value="<%= typeof query !== 'undefined' ? query : '' %>"
+      />
+      <button class="btn btn-primary" type="submit">Search</button>
+    </div>
 </form>
 
-<% if (typeof results !== 'undefined') { %>
-  <h2 class="mt-4 mb-3">Results</h2>
-
-  <% if (results.length > 0) { %>
-    <div class="list-group">
-      <% results.forEach(recipe => { %>
-        <a href="/recipe/<%= recipe.id %>" class="list-group-item list-group-item-action">
-          <%= recipe.title %>
-        </a>
-      <% }) %>
+<div id="results-container">
+    <% if (recipes.length === 0) { %>
+    <div class="alert alert-warning">No recipes found.</div>
+    <% } else { %>
+    <div class="table-responsive">
+        <table class="table table-striped table-hover">
+        <thead class="table-dark">
+            <tr>
+            <th>Name</th>
+            <th>Cook Time</th>
+            <th>Notes</th>
+            </tr>
+        </thead>
+        <tbody>
+            <% recipes.forEach(recipe => { %>
+            <tr class="clickable-row" data-href="/recipe/<%= recipe.id %>">
+                <td><%= recipe.name %></td>
+                <td><%= recipe.cookTime %></td>
+                <td><%= recipe.notes %></td>
+            </tr>
+            <% }) %>
+        </tbody>
+        </table>
     </div>
-  <% } else { %>
-    <div class="alert alert-warning">No recipes found matching "<%= query %>".</div>
-  <% } %>
-<% } %>
+    <% } %>
+</div>
+
+<script>
+    const input = document.querySelector('#live-search');
+    const form = input.closest('form');
+    const resultsContainer = document.querySelector('#results-container');
+  
+    let timer = null;
+  
+    input.addEventListener('input', () => {
+        const query = input.value.trim();
+
+        if (timer) clearTimeout(timer);
+
+        timer = setTimeout(async () => {
+            // No early return here - always fetch
+            const res = await fetch(`/api/search?q=${encodeURIComponent(query)}`);
+            const recipes = await res.json();
+
+            if (recipes.length === 0) {
+            resultsContainer.innerHTML = `<div class="alert alert-warning">No recipes found for "<strong>${query}</strong>"</div>`;
+            return;
+            }
+
+            let html = `
+            <div class="table-responsive">
+                <table class="table table-striped table-hover">
+                <thead class="table-dark">
+                    <tr>
+                    <th>Name</th>
+                    <th>Cook Time</th>
+                    <th>Notes</th>
+                    </tr>
+                </thead>
+                <tbody>
+            `;
+
+            for (const recipe of recipes) {
+            html += `
+                <tr class="clickable-row" data-href="/recipe/${recipe.id}">
+                <td>${recipe.name}</td>
+                <td>${recipe.cookTime}</td>
+                <td>${recipe.notes}</td>
+                </tr>
+            `;
+            }
+
+            html += `</tbody></table></div>`;
+            resultsContainer.innerHTML = html;
+
+            // reattach click handlers
+            document.querySelectorAll(".clickable-row").forEach(row => {
+            row.addEventListener("click", () => {
+                window.location.href = row.dataset.href;
+            });
+            });
+        }, 300);
+        });
+</script>
+
+
 

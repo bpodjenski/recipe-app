@@ -7,7 +7,7 @@
     "start": "node app.js",
     "test": "echo \"Error: no test specified\" && exit 1",
     "stop": "docker rm -f $(docker ps -aq) || echo 'no containers'",
-    "build": "docker build -t recipe-app .",
+    "build": "echo 'No build needed'",
     "run": " docker run -p 3000:3000 recipe-app"
   },
   "repository": {
@@ -25,6 +25,7 @@
     "ejs": "^3.1.10",
     "express": "^5.1.0",
     "express-ejs-layouts": "^2.5.1",
+    "multer": "^2.0.1",
     "sequelize": "^6.37.7",
     "sqlite3": "^5.1.7"
   }
