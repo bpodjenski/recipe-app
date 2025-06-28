@@ -2,6 +2,7 @@
 const express = require('express');
 const router = express.Router();
 const { Recipe, Ingredient, Comment } = require('../models');
+const upload = require('../middleware/upload');
 const { Op } = require('sequelize');
 
 const multer = require('multer');
