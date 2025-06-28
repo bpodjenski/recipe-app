@@ -21,7 +21,11 @@ const Recipe = sequelize.define('Recipe', {
   person: {
     type: DataTypes.STRING,
     allowNull: false
-  }
+  },
+    imagePath: {
+      type: DataTypes.STRING,
+      allowNull: true
+    }
 }, {
   timestamps: true
 });

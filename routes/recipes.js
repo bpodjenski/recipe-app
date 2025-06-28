@@ -4,6 +4,23 @@ const router = express.Router();
 const { Recipe, Ingredient, Comment } = require('../models');
 const { Op } = require('sequelize');
 
+const multer = require('multer');
+const path = require('path');
+
+// Set storage location and file naming
+const storage = multer.diskStorage({
+  destination: function (req, file, cb) {
+    cb(null, path.join(__dirname, '..', 'public', 'uploads'));
+  },
+  filename: function (req, file, cb) {
+    const uniqueSuffix = Date.now() + '-' + Math.round(Math.random() * 1E9);
+    cb(null, uniqueSuffix + path.extname(file.originalname));
+  }
+});
+
+const upload = multer({ storage: storage });
+
+
 // GET Home - list all recipes
 router.get('/', async (req, res) => {
   const recipes = await Recipe.findAll({ order: [['createdAt', 'DESC']] });
@@ -12,14 +29,53 @@ router.get('/', async (req, res) => {
 
 // GET Search
 router.get('/search', async (req, res) => {
-  const query = req.query.q || '';
-  const results = await Recipe.findAll({
-    where: {
-      name: { [Op.like]: `%${query}%` }
+    const query = req.query.q || '';
+  
+    try {
+      const recipes = await Recipe.findAll({
+        where: {
+          name: {
+            [Op.like]: `%${query}%`
+          }
+        },
+        order: [['createdAt', 'DESC']]
+      });
+      res.render('search', { recipes, query });
+    } catch (err) {
+      console.error(err);
+      res.render('search', { recipes: [], query });
     }
   });
-  res.render('search', { results, query });
-});
+
+// search live update api 
+router.get('/api/search', async (req, res) => {
+    const query = req.query.q || '';
+  
+    try {
+      let recipes;
+  
+      if (query.trim() === '') {
+        // Return all recipes if query is empty
+        recipes = await Recipe.findAll({
+          order: [['createdAt', 'DESC']],
+        });
+      } else {
+        recipes = await Recipe.findAll({
+          where: {
+            name: {
+              [Op.like]: `%${query}%`
+            }
+          },
+          order: [['createdAt', 'DESC']]
+        });
+      }
+  
+      res.json(recipes);
+    } catch (err) {
+      console.error(err);
+      res.status(500).json([]);
+    }
+  });
 
 // GET Create Recipe Form
 router.get('/create-recipe', (req, res) => {
@@ -27,10 +83,12 @@ router.get('/create-recipe', (req, res) => {
 });
 
 // POST Create Recipe with Ingredients
-router.post('/create-recipe', async (req, res) => {
+router.post('/create-recipe', upload.single('image'), async (req, res) => {
   const { name, instructions, cookTime, notes, person, ingredients } = req.body;
+  const imagePath = req.file ? `/uploads/${req.file.filename}` : null;
 
-  const recipe = await Recipe.create({ name, instructions, cookTime, notes, person });
+  const recipe = await Recipe.create({ name, instructions, cookTime, notes, person, imagePath });
+
 
   // `ingredients` is expected to be an array of { name, amount }
   if (Array.isArray(ingredients)) {
@@ -56,7 +114,7 @@ router.get('/recipe/:id', async (req, res) => {
 
   if (!recipe) return res.status(404).send('Recipe not found');
 
-  res.render('view', { recipe });
+  res.render('recipe', { recipe });
 });
 
 // POST Add a Comment to a Recipe
@@ -73,34 +131,3 @@ router.post('/recipe/:id/comments', async (req, res) => {
 });
 
 module.exports = router;
-// const express = require('express');
-// const router = express.Router();
-// const recipeModel = require('../models/recipe');
-
-// router.get('/', (req, res) => {
-//   const recipes = recipeModel.getAll();
-//   res.render('home', { recipes });
-// });
-
-// router.get('/search', (req, res) => {
-//   const query = req.query.q;
-//   const results = query ? recipeModel.search(query) : [];
-//   res.render('search', { results, query });
-// });
-
-// router.get('/create-recipe', (req, res) => {
-//   res.render('create-recipe');
-// });
-
-// router.post('/create-recipe', (req, res) => {
-//   recipeModel.create(req.body);
-//   res.redirect('/');
-// });
-
-// router.get('/recipe/:id', (req, res) => {
-//   const recipe = recipeModel.getById(req.params.id);
-//   if (!recipe) return res.status(404).send('Not Found');
-//   res.render('recipe', { recipe });
-// });
-
-// module.exports = router;
