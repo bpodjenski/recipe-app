@@ -48,7 +48,7 @@ router.get('/search', async (req, res) => {
     }
   });
 
-// search live update api
+// search live update API
 router.get('/api/search', async (req, res) => {
     const query = req.query.q || '';
   
