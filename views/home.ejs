@@ -5,8 +5,8 @@
       <div class="col">
         <a href="/recipe/<%= recipe.id %>" class="text-decoration-none text-dark">
           <div class="card h-100" style="cursor: pointer;">
-            <% if (recipe.imagePath) { %>
-              <img src="<%= recipe.imagePath %>" class="card-img-top" alt="Recipe Image" style="height: 80px; object-fit: cover;">
+            <% if (recipe.Images && recipe.Images.length > 0) { %>
+              <img src="/uploads/<%= image.filename %>" class="card-img-top" alt="Recipe Image" style="height: 80px; object-fit: cover;">
             <% } else { %>
               <div class="card-img-top d-flex align-items-center justify-content-center bg-light text-muted" style="height: 80px;">
                 No image available

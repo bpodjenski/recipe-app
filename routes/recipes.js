@@ -1,7 +1,7 @@
 // routes/recipes.js
 const express = require('express');
 const router = express.Router();
-const { Recipe, Ingredient, Comment } = require('../models');
+const { Recipe, Ingredient, Comment, Image } = require('../models');
 const upload = require('../middleware/upload');
 const { Op } = require('sequelize');
 
@@ -84,13 +84,21 @@ router.get('/create-recipe', (req, res) => {
 });
 
 // POST Create Recipe with Ingredients
-router.post('/create-recipe', upload.single('image'), async (req, res) => {
+router.post('/create-recipe', upload.array('images', 10), async (req, res) => {
   // test data persistance
   const { name, instructions, cookTime, notes, person, ingredients } = req.body;
   const imagePath = req.file ? `/uploads/${req.file.filename}` : null;
+  console.log(req.file)
+  const recipe = await Recipe.create({ name, instructions, cookTime, notes, person});
 
-  const recipe = await Recipe.create({ name, instructions, cookTime, notes, person, imagePath });
-
+  // if theres files create images 
+  if (req.files && req.files.length > 0) {
+    const imageRecords = req.files.map(file => ({
+      filename: file.filename,
+      recipeId: recipe.id
+    }));
+    await Image.bulkCreate(imageRecords);
+  }
 
   // `ingredients` is expected to be an array of { name, amount }
   if (Array.isArray(ingredients)) {
@@ -111,12 +119,26 @@ router.post('/create-recipe', upload.single('image'), async (req, res) => {
 // GET View Recipe Details with Ingredients and Comments
 router.get('/recipe/:id', async (req, res) => {
   const recipe = await Recipe.findByPk(req.params.id, {
-    include: [Ingredient, Comment]
+    include: [Ingredient, Comment, Image]
   });
+
+  
 
   if (!recipe) return res.status(404).send('Recipe not found');
 
   res.render('recipe', { recipe });
+});
+
+// DELETE /recipes/:id
+router.post('/recipe/delete/:id', async (req, res) => {
+    const recipeId = req.params.id;
+    try {
+      await Recipe.destroy({ where: { id: recipeId } });
+      res.redirect('/');
+    } catch (err) {
+      console.error(err);
+      res.status(500).send('Failed to delete recipe.');
+    }
 });
 
 // POST Add a Comment to a Recipe
@@ -133,3 +155,25 @@ router.post('/recipe/:id/comments', async (req, res) => {
 });
 
 module.exports = router;
+
+// GET: Show form to upload a photo
+router.get('/:id/add-photo', async (req, res) => {
+    const recipe = await Recipe.findByPk(req.params.id);
+    if (!recipe) return res.status(404).send('Recipe not found');
+    res.render('add-photo', { recipe });
+});
+  
+  // POST: Handle file upload + DB update
+router.post('/recipe/:id/add-photo', upload.single('image'), async (req, res) => {
+    const recipe = await Recipe.findByPk(req.params.id);
+    if (!recipe) return res.status(404).send('Recipe not found');
+  
+    if (!req.file) return res.status(400).send('No image uploaded');
+  
+    await Image.create({
+        filename: req.file.filename,
+        recipeId: recipe.id
+    });
+  
+    res.redirect(`/recipe/${recipe.id}`);
+});
