@@ -5,7 +5,7 @@ const isProd = process.env.NODE_ENV === 'production';
 
 const storagePath = isProd
   ? '/data/recipes.sqlite'
-  : path.join(__dirname, '/data/recipes.sqlite');
+  : path.join(__dirname, '../data/recipes.sqlite');
 
 const sequelize = new Sequelize({
   dialect: 'sqlite',
