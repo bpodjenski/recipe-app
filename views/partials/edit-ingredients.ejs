@@ -1,0 +1,36 @@
+<h5>Ingredients</h5>
+<div id="ingredients-list">
+  <% recipe.Ingredients.forEach((ing, index) => { %>
+    <div class="ingredient-item d-flex align-items-center mb-2" data-index="<%= index %>">
+      <input type="hidden" name="ingredients[<%= index %>][id]" value="<%= ing.id %>">
+      <input type="text" name="ingredients[<%= index %>][name]" value="<%= ing.name %>" placeholder="Ingredient" required class="form-control me-2" style="max-width: 60%;">
+      <input type="text" name="ingredients[<%= index %>][amount]" value="<%= ing.amount %>" placeholder="Amount" required class="form-control me-2" style="max-width: 30%;">
+      <button type="button" class="btn btn-outline-danger btn-sm remove-ingredient" style="cursor: pointer;">&times;</button>
+    </div>
+  <% }) %>
+</div>
+
+<button type="button" id="add-ingredient" class="btn btn-secondary mb-3">Add Ingredient</button>
+
+<script>
+  document.getElementById('add-ingredient').addEventListener('click', () => {
+    const list = document.getElementById('ingredients-list');
+    const index = list.children.length;
+    const div = document.createElement('div');
+    div.className = 'ingredient-item d-flex align-items-center mb-2';
+    div.dataset.index = index;
+    div.innerHTML = `
+      <input type="hidden" name="ingredients[${index}][id]" value="">
+      <input type="text" name="ingredients[${index}][name]" placeholder="Ingredient" required class="form-control me-2" style="max-width: 60%;">
+      <input type="text" name="ingredients[${index}][amount]" placeholder="Amount" required class="form-control me-2" style="max-width: 30%;">
+      <button type="button" class="btn btn-outline-danger btn-sm remove-ingredient" style="cursor: pointer;">&times;</button>
+    `;
+    list.appendChild(div);
+  });
+
+  document.getElementById('ingredients-list').addEventListener('click', (e) => {
+    if (e.target.classList.contains('remove-ingredient')) {
+      e.target.closest('.ingredient-item').remove();
+    }
+  });
+</script>

@@ -1,109 +1,119 @@
-<!-- views/recipe.ejs -->
-
-<div class="d-flex justify-content-center mb-4">
-    <div class="card" style="max-width: 350px; width: 100%;">
-        <% if (recipe.Images && recipe.Images.length > 0) { %>
-            <div id="recipeCarousel" class="carousel slide mb-4" data-bs-ride="carousel">
-              <div class="carousel-inner">
-                <% recipe.Images.forEach((image, index) => { %>
-                  <div class="carousel-item <%= index === 0 ? 'active' : '' %>" style="height: 400px; overflow: hidden;">
-                    <img src="/uploads/<%= image.filename %>" class="d-block w-100" alt="Recipe Image" style="cursor: zoom-in;" data-bs-toggle="modal" data-bs-target="#imageModal" data-image="/uploads/<%= image.filename %>">
-                  </div>
-                <% }) %>
-              </div>
-          
-              <% if (recipe.Images.length > 1) { %>
-                <button class="carousel-control-prev" type="button" data-bs-target="#recipeCarousel" data-bs-slide="prev">
-                  <span class="carousel-control-prev-icon" aria-hidden="true"></span>
-                  <span class="visually-hidden">Previous</span>
-                </button>
-                <button class="carousel-control-next" type="button" data-bs-target="#recipeCarousel" data-bs-slide="next">
-                  <span class="carousel-control-next-icon" aria-hidden="true"></span>
-                  <span class="visually-hidden">Next</span>
-                </button>
-              <% } %>
+<div class="container mt-4">
+    <div class="row justify-content-center">
+      <div class="col-lg-10">
+        <div class="card shadow p-4">
+            <div class="d-flex align-items-start">
+                <h1 class="me-3"><%= recipe.name %></h1>
+                <a href="/recipe/<%= recipe.id %>/edit" class="btn btn-link p-0 m-0 text-muted" 
+                   style="font-size: 1.5rem; text-decoration: none;" aria-label="Edit recipe">
+                   ✏️
+                </a>
             </div>
-          <% } else { %>
-            <p>No images uploaded for this recipe.</p>
-          <% } %>
-    </div>
-  </div>
-<h1><%= recipe.name %></h1>
-<p><strong>By:</strong> <%= recipe.person %></p>
-<p><strong>Cook Time:</strong> <%= recipe.cookTime %></p>
-<p><strong>Notes:</strong> <%= recipe.notes %></p>
-
-<hr>
-
-<h4>Ingredients</h4>
-<ul>
-  <% recipe.Ingredients.forEach(ing => { %>
-    <li><%= ing.amount %> - <%= ing.name %></li>
-  <% }) %>
-</ul>
-
-<hr>
-
-<h4>Instructions</h4>
-<p><%= recipe.instructions %></p>
-<!-- onsubmit="return confirm('Are you sure?')" -->
-<hr>
-
-<form action="/recipe/<%= recipe.id %>/add-photo" method="POST" enctype="multipart/form-data">
-    <input type="file" name="image" accept="image/*" required>
-    <button type="submit">Upload</button>
-</form>
-
-<hr>
-
-<form action="/recipe/delete/<%= recipe.id %>" method="POST">
-    <button type="submit" class="btn btn-danger">Delete</button>
-</form>
-
-<hr>
-
-<h4>Comments</h4>
-<% if (recipe.Comments.length === 0) { %>
-  <p>No comments yet. Be the first!</p>
-<% } else { %>
-  <% recipe.Comments.forEach(comment => { %>
-    <div class="mb-3">
-      <strong><%= comment.person %></strong> — <small><%= new Date(comment.date).toLocaleString() %></small>
-      <p><%= comment.text %></p>
-    </div>
-  <% }) %>
-<% } %>
-
-<h5 class="mt-4">Add a Comment</h5>
-<form method="POST" action="/recipe/<%= recipe.id %>/comments">
-  <div class="mb-3">
-    <label class="form-label">Your Name</label>
-    <input type="text" name="person" class="form-control" required />
-  </div>
-  <div class="mb-3">
-    <label class="form-label">Comment</label>
-    <textarea name="text" class="form-control" rows="3" required></textarea>
-  </div>
-  <button class="btn btn-primary">Post Comment</button>
-</form>
-
-<div class="modal fade" id="imageModal" tabindex="-1" aria-hidden="true">
-    <div class="modal-dialog modal-dialog-centered modal-lg">
-        <div class="modal-content bg-dark">
-        <div class="modal-body text-center p-0">
-            <img id="modalImage" src="" alt="Full View" class="img-fluid rounded">
+            <div class="row">
+                <div class="col-auto">
+                    <form id="ratingForm" action="/recipe/<%= recipe.id %>/rate" method="POST" style="display: inline-block;">
+                        <input type="hidden" name="rating" id="ratingInput" value="0" />
+                        <div class="star-rating d-flex flex-row align-items-start" style="font-size: 1.5rem; cursor: pointer; user-select: none;">
+                            <% for(let i = 5; i >= 1; i--) { %>
+                            <span class="star text-muted" data-value="<%= i %>">&#9733;</span>
+                            <% } %>
+                        </div>
+                    </form>
+                </div>
+                <div clas="col"></div>
+            </div>
+          <!-- <a href="/recipe/<%= recipe.id %>/edit" class="btn btn-warning mb-3">Edit Recipe</a> -->
+          <p class="text-muted"><strong>By:</strong> <%= recipe.person %> | <strong>Time:</strong> <%= Math.floor(recipe.cookTime / 60) %> hr <%= recipe.cookTime % 60 %></p>
+  
+          <div class="row mb-4">
+            <div class="col-md-6">
+              <h5>📝 Notes</h5>
+              <p><%= recipe.notes || 'No notes' %></p>
+              <h5>🧂 Ingredients</h5>
+              <ul>
+                <% recipe.Ingredients.forEach(ing => { %>
+                  <li><%= ing.amount %> - <%= ing.name %></li>
+                <% }) %>
+              </ul>
+            </div>
+            <div class="col-md-6">
+              <%- include('partials/image-carousel', { recipe }) %>
+            </div>
+            <h5>📖 Instructions</h5>
+            <p><%= recipe.instructions %></p>
+          </div>
+  
+          
+  
+          <div class="mt-4">
+            <%- include('partials/comment-list', { recipe }) %>
+            <%- include('partials/comment-form', { recipe }) %>
+          </div>
         </div>
-        </div>
+      </div>
     </div>
-</div>
-
-<script>
+  </div>
+  <%- include('partials/image-modal', { recipe }) %>
+  <script>
     const imageModal = document.getElementById('imageModal');
     const modalImage = document.getElementById('modalImage');
-  
     imageModal.addEventListener('show.bs.modal', function (event) {
       const triggerImg = event.relatedTarget;
       const imageSrc = triggerImg.getAttribute('data-image');
       modalImage.src = imageSrc;
     });
-</script>
+
+    const stars = document.querySelectorAll('.star-rating .star');
+  const ratingInput = document.getElementById('ratingInput');
+  const form = document.getElementById('ratingForm');
+
+  stars.forEach(star => {
+    star.addEventListener('click', () => {
+        const ratingValue = star.getAttribute('data-value');
+        ratingInput.value = ratingValue;
+        form.submit();
+    });
+
+    star.addEventListener('mouseenter', () => {
+        highlightStars(star.getAttribute('data-value'));
+    });
+
+    star.addEventListener('mouseleave', () => {
+        highlightStars(ratingInput.value);
+    });
+    });
+
+    function highlightStars(rating) {
+    stars.forEach(star => {
+        if (star.getAttribute('data-value') <= rating) {
+        star.classList.remove('text-muted');
+        star.classList.add('text-warning');
+        } else {
+        star.classList.remove('text-warning');
+        star.classList.add('text-muted');
+        }
+    });
+    }
+
+ 
+  </script>
+
+<style>
+    .star-rating {
+      direction: rtl;
+      font-size: 1.5rem;
+      display: inline-flex;
+    }
+    .star-rating input[type="radio"] {
+      display: none;
+    }
+    .star-rating label {
+      color: #ccc;
+      cursor: pointer;
+    }
+    .star-rating input[type="radio"]:checked ~ label,
+    .star-rating label:hover,
+    .star-rating label:hover ~ label {
+      color: gold;
+    }
+  </style>

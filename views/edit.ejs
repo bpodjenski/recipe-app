@@ -1,0 +1,85 @@
+<div class="container mt-4">
+    <div class="row justify-content-center">
+      <div class="col-lg-10">
+        <div class="card shadow p-4">
+            <div class="d-flex justify-content-between align-items-center mb-4">
+                <h1 class="mb-0">Edit Recipe</h1>
+                
+                <form action="/recipe/<%= recipe.id %>/delete" method="POST" onsubmit="return confirm('Are you sure you want to delete this recipe?');">
+                  <button type="submit" class="btn btn-outline-danger btn-sm">
+                    Delete
+                  </button>
+                </form>
+            </div>
+        
+            <form action="/recipe/edit/<%= recipe.id %>" method="POST" enctype="multipart/form-data">
+            <div class="mb-3">
+                <label class="form-label">Recipe Name</label>
+                <input type="text" name="name" class="form-control" value="<%= recipe.name %>" required>
+            </div>
+        
+            <div class="mb-3">
+                <label for="cookTime" class="form-label">Cook Time</label>
+                <div class="d-flex gap-2">
+                  <select name="cookHours" class="form-select" style="max-width: 120px;">
+                    <% for (let i = 0; i <= 12; i++) { %>
+                      <option value="<%= i %>" <%= recipe.cookTime && Math.floor(recipe.cookTime / 60) === i ? 'selected' : '' %>>
+                        <%= i %> hr
+                      </option>
+                    <% } %>
+                  </select>
+              
+                  <select name="cookMinutes" class="form-select" style="max-width: 120px;">
+                    <% for (let i = 0; i < 60; i += 5) { %>
+                      <option value="<%= i %>" <%= recipe.cookTime && recipe.cookTime % 60 === i ? 'selected' : '' %>>
+                        <%= i %> min
+                      </option>
+                    <% } %>
+                  </select>
+                </div>
+              </div>
+        
+            <div class="mb-3">
+                <label class="form-label">Notes</label>
+                <textarea name="notes" class="form-control" rows="2"><%= recipe.notes %></textarea>
+            </div>
+        
+            <div class="mb-3">
+                <label class="form-label">Instructions</label>
+                <textarea name="instructions" class="form-control" rows="5" required><%= recipe.instructions %></textarea>
+            </div>
+
+            <div class="mb-3">
+                <%- include('partials/edit-ingredients', { recipe }) %>
+            </div>
+        
+            <div class="mb-3">
+                <label class="form-label">Author</label>
+                <input type="text" name="person" class="form-control" value="<%= recipe.person %>" required>
+            </div>
+        
+            <div class="mb-3">
+                <label class="form-label">Add More Photos</label>
+                <input type="file" name="images" class="form-control" accept="image/*" multiple>
+            </div>
+        
+            <button class="btn btn-primary">Update Recipe</button>
+            <a href="/recipe/<%= recipe.id %>" class="btn btn-secondary ms-2">Cancel</a>
+            </form>
+        
+            <hr>
+        
+            <h5>Current Images</h5>
+            <div class="row">
+            <% recipe.Images.forEach(image => { %>
+                <div class="col-md-3 mb-3 position-relative d-inline-block">
+                <img src="/uploads/<%= image.filename %>" class="img-fluid rounded">
+                <form action="/recipe/<%= recipe.id %>/images/<%= image.id %>?_method=DELETE" method="POST" class="position-absolute top-0 end-0 m-1 mx-3">
+                    <button type="submit" class="btn btn-sm" style="line-height: 1; padding: 0 6px; background: whitesmoke;">&times;</button>
+                </form>
+                </div>
+            <% }) %>
+            </div>
+        </div>
+    </div>
+</div>

@@ -3,6 +3,7 @@ const Recipe = require('./recipe');
 const Ingredient = require('./ingredient');
 const Comment = require('./comment');
 const Image = require('./image');
+const Rating = require('./rating')
 
 
 
@@ -25,10 +26,13 @@ Recipe.hasMany(Image, {
   onDelete: 'CASCADE'});
 Image.belongsTo(Recipe, { foreignKey: 'recipeId' });
 
+Rating.belongsTo(Recipe, { foreignKey: 'recipeId' });
+
 module.exports = {
   sequelize,
   Recipe,
   Ingredient,
   Comment,
-  Image
+  Image,
+  Rating
 };
