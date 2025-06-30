@@ -1,0 +1,12 @@
+<h5 class="mb-3">Add a Comment</h5>
+<form method="POST" action="/recipe/<%= recipe.id %>/comments" class="mb-5">
+  <div class="mb-3">
+    <label for="comment-person" class="form-label">Your Name</label>
+    <input type="text" id="comment-person" name="person" class="form-control" placeholder="Enter your name" required />
+  </div>
+  <div class="mb-3">
+    <label for="comment-text" class="form-label">Comment</label>
+    <textarea id="comment-text" name="text" class="form-control" rows="4" placeholder="Write your comment here..." required></textarea>
+  </div>
+  <button type="submit" class="btn btn-primary px-4">Post Comment</button>
+</form>

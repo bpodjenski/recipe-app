@@ -1,48 +1,72 @@
 <!-- views/createRecipe.ejs -->
-<h1 class="mb-4">Add a New Recipe</h1>
+<div class="container mt-4">
+  <div class="row justify-content-center">
+    <div class="col-lg-10">
+      <div class="card shadow p-4">
+        <h1 class="mb-4">Add a New Recipe</h1>
 
-<form action="/create-recipe" method="POST" enctype="multipart/form-data">
-  <div class="mb-3">
-    <label class="form-label">Recipe Name</label>
-    <input type="text" name="name" class="form-control" required />
-  </div>
-  <div class="mb-3">
-    <label class="form-label">Cook Time</label>
-    <input type="text" name="cookTime" class="form-control" placeholder="e.g. 45 minutes" required />
-  </div>
-  <div class="mb-3">
-    <label class="form-label">Instructions</label>
-    <textarea name="instructions" class="form-control" rows="5" required></textarea>
-  </div>
-  <div class="mb-3">
-    <label class="form-label">Notes</label>
-    <textarea name="notes" class="form-control" rows="3"></textarea>
-  </div>
-  <div class="mb-3">
-    <label class="form-label">Your Name</label>
-    <input type="text" name="person" class="form-control" required />
-  </div>
+        <form action="/create-recipe" method="POST" enctype="multipart/form-data">
+          <div class="mb-3">
+            <label class="form-label">Recipe Name</label>
+            <input type="text" name="name" class="form-control" required />
+          </div>
+          <div class="mb-3">
+            <label for="cookTime" class="form-label">Cook Time</label>
+            <div class="d-flex gap-2">
+              <select name="cookHours" class="form-select" style="max-width: 120px;">
+                <% for (let i = 0; i <= 12; i++) { %>
+                  <option value="<%= i %>" <%= recipe.cookTime && Math.floor(recipe.cookTime / 60) === i ? 'selected' : '' %>>
+                    <%= i %> hr
+                  </option>
+                <% } %>
+              </select>
+          
+              <select name="cookMinutes" class="form-select" style="max-width: 120px;">
+                <% for (let i = 0; i < 60; i += 5) { %>
+                  <option value="<%= i %>" <%= recipe.cookTime && recipe.cookTime % 60 === i ? 'selected' : '' %>>
+                    <%= i %> min
+                  </option>
+                <% } %>
+              </select>
+            </div>
+          </div>
+          <div class="mb-3">
+            <label class="form-label">Instructions</label>
+            <textarea name="instructions" class="form-control" rows="5" required></textarea>
+          </div>
+          <div class="mb-3">
+            <label class="form-label">Notes</label>
+            <textarea name="notes" class="form-control" rows="3"></textarea>
+          </div>
+          <div class="mb-3">
+            <label class="form-label">Your Name</label>
+            <input type="text" name="person" class="form-control" required />
+          </div>
 
-  <h5>Ingredients</h5>
-  <div id="ingredient-list">
-    <div class="row mb-2">
-      <div class="col">
-        <input type="text" name="ingredients[0][name]" class="form-control" placeholder="Ingredient name" />
-      </div>
-      <div class="col">
-        <input type="text" name="ingredients[0][amount]" class="form-control" placeholder="Amount" />
+          <h5>Ingredients</h5>
+          <div id="ingredient-list">
+            <div class="row mb-2">
+              <div class="col">
+                <input type="text" name="ingredients[0][name]" class="form-control" placeholder="Ingredient name" />
+              </div>
+              <div class="col">
+                <input type="text" name="ingredients[0][amount]" class="form-control" placeholder="Amount" />
+              </div>
+            </div>
+          </div>
+          <button type="button" class="btn btn-secondary mb-3" id="add-ingredient">+ Add Ingredient</button>
+          <div class="mb-3">
+            <label for="image" class="form-label">Recipe Image (optional)</label>
+            <input class="form-control" type="file" name="images" id="images" multiple accept="image/*">
+          </div>
+          <div>
+            <button class="btn btn-success">Create Recipe</button>
+          </div>
+        </form>
       </div>
     </div>
   </div>
-  <button type="button" class="btn btn-secondary mb-3" id="add-ingredient">+ Add Ingredient</button>
-  <div class="mb-3">
-    <label for="image" class="form-label">Recipe Image (optional)</label>
-    <input class="form-control" type="file" name="image" id="image" accept="image/*">
-  </div>
-  <div>
-    <button class="btn btn-success">Create Recipe</button>
-  </div>
-</form>
+</div>
 
 <script>
   let ingredientIndex = 1;
@@ -63,3 +87,22 @@
   });
 </script>
 
+<style>
+  .star-rating {
+    direction: rtl;
+    font-size: 1.5rem;
+    display: inline-flex;
+  }
+  .star-rating input[type="radio"] {
+    display: none;
+  }
+  .star-rating label {
+    color: #ccc;
+    cursor: pointer;
+  }
+  .star-rating input[type="radio"]:checked ~ label,
+  .star-rating label:hover,
+  .star-rating label:hover ~ label {
+    color: gold;
+  }
+</style>

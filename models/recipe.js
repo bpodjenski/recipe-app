@@ -12,7 +12,7 @@ const Recipe = sequelize.define('Recipe', {
     allowNull: false
   },
   cookTime: {
-    type: DataTypes.STRING, // e.g. "45 minutes"
+    type: DataTypes.INTEGER,
     allowNull: false
   },
   notes: {
@@ -22,10 +22,10 @@ const Recipe = sequelize.define('Recipe', {
     type: DataTypes.STRING,
     allowNull: false
   },
-    imagePath: {
-      type: DataTypes.STRING,
-      allowNull: true
-    }
+  rating: {
+    type: DataTypes.FLOAT,
+    defaultValue: 0
+  }
 }, {
   timestamps: true
 });

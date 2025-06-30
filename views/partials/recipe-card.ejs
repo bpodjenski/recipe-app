@@ -1,0 +1,36 @@
+<div class="col recipe-card" data-name="<%= recipe.name.toLowerCase() %>" data-notes="<%= recipe.notes.toLowerCase() %>">
+    <a href="/recipe/<%= recipe.id %>" class="text-decoration-none text-dark">
+      <div class="card h-100" style="cursor: pointer;">
+        <% if (recipe.Images && recipe.Images.length > 0) { %>
+          <img src="/uploads/<%= recipe.Images[0].filename %>" class="card-img-top" alt="Recipe Image" style="height: 80px; object-fit: cover;">
+        <% } else { %>
+          <div class="card-img-top d-flex align-items-center justify-content-center bg-light text-muted" style="height: 80px;">
+            No image available
+          </div>
+        <% } %>
+        <div class="card-body">
+          <div class="row">
+              <div class="col">
+                  <h5 class="card-title"><%= recipe.name %></h5>
+              </div>
+              <div class="col-auto">
+                  <p>
+                      <% for(let i = 1; i <= 5; i++) { %>
+                      <% if(i <= Math.round(recipe.rating)) { %>
+                          <span class="star text-warning">&#9733;</span>
+                      <% } else { %>
+                          <span class="star text-muted">&#9734;</span>
+                      <% } %>
+                      <% } %>
+                  </p>
+              </div>
+          </div>
+          <p class="card-text">Cook Time: <%= Math.floor(recipe.cookTime / 60) %> hr <%= recipe.cookTime % 60 %></p>
+          <p class="card-text text-truncate"><%= recipe.notes %></p>
+        </div>
+      </div>
+    </a>
+    <div class="d-none ingredients-text">
+      <%= recipe.Ingredients.map(ing => ing.name).join(', ') %>
+    </div>
+  </div>

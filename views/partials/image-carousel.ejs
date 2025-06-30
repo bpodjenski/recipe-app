@@ -1,0 +1,24 @@
+<% if (recipe.Images && recipe.Images.length > 0) { %>
+    <div id="recipeCarousel" class="carousel slide mb-4" data-bs-ride="carousel">
+      <div class="carousel-inner">
+        <% recipe.Images.forEach((image, index) => { %>
+          <div class="carousel-item <%= index === 0 ? 'active' : '' %>" style="height: 400px; overflow: hidden;">
+            <img src="/uploads/<%= image.filename %>" class="d-block w-100" alt="Recipe Image" style="cursor: zoom-in;" data-bs-toggle="modal" data-bs-target="#imageModal" data-image="/uploads/<%= image.filename %>">
+          </div>
+        <% }) %>
+      </div>
+  
+      <% if (recipe.Images.length > 1) { %>
+        <button class="carousel-control-prev" type="button" data-bs-target="#recipeCarousel" data-bs-slide="prev">
+          <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+          <span class="visually-hidden">Previous</span>
+        </button>
+        <button class="carousel-control-next" type="button" data-bs-target="#recipeCarousel" data-bs-slide="next">
+          <span class="carousel-control-next-icon" aria-hidden="true"></span>
+          <span class="visually-hidden">Next</span>
+        </button>
+      <% } %>
+    </div>
+  <% } else { %>
+    <p>No images uploaded for this recipe.</p>
+  <% } %>
