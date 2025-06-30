@@ -1,11 +1,14 @@
 // app.js
 const express = require('express');
+const fs = require('fs');
 const path = require('path');
 const recipeRoutes = require('./routes/recipes');
 const expressLayouts = require('express-ejs-layouts');
 
-
 const app = express();
+
+fs.mkdirSync('/data/uploads', { recursive: true });
+
 app.use(express.urlencoded({ extended: true }));
 app.use(express.static(path.join(__dirname, 'public')));
 
