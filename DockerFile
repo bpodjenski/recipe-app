@@ -14,8 +14,8 @@ RUN npm install
 COPY . .
 
 # prevent deployments from wiping the volume
-RUN mkdir -p /data/uploads && \
-    test -f /data/recipes.sqlite || cp /app/seed/recipes.sqlite /data/recipes.sqlite
+# RUN mkdir -p /data/uploads && \
+#     test -f /data/recipes.sqlite || cp /app/seed/recipes.sqlite /data/recipes.sqlite
 
 # Step 6: Expose the port that the app will run on
 EXPOSE 3000
