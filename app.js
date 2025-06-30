@@ -84,7 +84,7 @@ app.use('/', recipeRoutes);
 
 // ✅ Initialize database
 const { sequelize } = require('./models');
-sequelize.sync({ force: true }).then(() => {
+sequelize.sync().then(() => {
   console.log('✅ All models synced to the database');
 }).catch(err => {
   console.error('❌ Failed to sync database:', err);
