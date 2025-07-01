@@ -90,6 +90,39 @@ sequelize.sync({ alter: true }).then(() => {
   console.error('❌ Failed to sync database:', err);
 });
 
+
+(async () => {
+    try {
+      // 1. Create new table with ON DELETE CASCADE
+      await sequelize.query(`
+        CREATE TABLE IF NOT EXISTS Ratings_new (
+          id INTEGER PRIMARY KEY AUTOINCREMENT,
+          score INTEGER,
+          recipeId INTEGER,
+          createdAt DATETIME,
+          updatedAt DATETIME,
+          FOREIGN KEY(recipeId) REFERENCES Recipes(id) ON DELETE CASCADE
+        )
+      `);
+  
+      // 2. Copy data from old Ratings table
+      await sequelize.query(`
+        INSERT INTO Ratings_new (id, score, recipeId, createdAt, updatedAt)
+        SELECT id, score, recipeId, createdAt, updatedAt FROM Ratings
+      `);
+  
+      // 3. Drop old Ratings table
+      await sequelize.query(`DROP TABLE Ratings`);
+  
+      // 4. Rename new table to Ratings
+      await sequelize.query(`ALTER TABLE Ratings_new RENAME TO Ratings`);
+  
+      console.log('✅ Ratings table recreated with ON DELETE CASCADE');
+    } catch (err) {
+      console.error('❌ Failed to rebuild Ratings table:', err);
+    }
+  })();
+
 // Serve uploaded images
 const uploadDir = process.env.NODE_ENV === 'production'
   ? '/data/uploads'
