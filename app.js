@@ -97,18 +97,16 @@ sequelize.sync({ alter: true }).then(() => {
       await sequelize.query(`
         CREATE TABLE IF NOT EXISTS Ratings_new (
           id INTEGER PRIMARY KEY AUTOINCREMENT,
-          score INTEGER,
+          rating INTEGER,
           recipeId INTEGER,
-          createdAt DATETIME,
-          updatedAt DATETIME,
           FOREIGN KEY(recipeId) REFERENCES Recipes(id) ON DELETE CASCADE
         )
       `);
   
       // 2. Copy data from old Ratings table
       await sequelize.query(`
-        INSERT INTO Ratings_new (id, score, recipeId, createdAt, updatedAt)
-        SELECT id, score, recipeId, createdAt, updatedAt FROM Ratings
+        INSERT INTO Ratings_new (id, rating, recipeId)
+        SELECT id, rating, recipeId FROM Ratings
       `);
   
       // 3. Drop old Ratings table
