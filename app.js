@@ -95,6 +95,9 @@ sequelize.sync({ alter: true }).then(() => {
     try {
       // Drop old Ratings table if exists (losing all data)
       await sequelize.query(`DROP TABLE IF EXISTS Ratings`);
+
+      await sequelize.query(`DROP TABLE IF EXISTS Recipes_backup`);
+      console.log('✅ Dropped Recipes_backup table if it existed.');
   
       // Create new Ratings table with ON DELETE CASCADE and proper columns
       await sequelize.query(`
