@@ -93,34 +93,23 @@ sequelize.sync({ alter: true }).then(() => {
 
 (async () => {
     try {
-      // Drop new table if exists (clean slate)
-      await sequelize.query(`DROP TABLE IF EXISTS Ratings_new`);
+      // Drop old Ratings table if exists (losing all data)
+      await sequelize.query(`DROP TABLE IF EXISTS Ratings`);
   
-      // Create new table with correct schema
+      // Create new Ratings table with ON DELETE CASCADE and proper columns
       await sequelize.query(`
-        CREATE TABLE Ratings_new (
+        CREATE TABLE Ratings (
           id INTEGER PRIMARY KEY AUTOINCREMENT,
           rating INTEGER,
           recipeId INTEGER,
+          createdAt DATETIME,
           FOREIGN KEY(recipeId) REFERENCES Recipes(id) ON DELETE CASCADE
         )
       `);
   
-      // Copy data (if the old Ratings table exists and has these columns)
-      await sequelize.query(`
-        INSERT INTO Ratings_new (id, rating, recipeId)
-        SELECT id, rating, recipeId FROM Ratings
-      `);
-  
-      // Drop old Ratings table
-      await sequelize.query(`DROP TABLE Ratings`);
-  
-      // Rename new table to Ratings
-      await sequelize.query(`ALTER TABLE Ratings_new RENAME TO Ratings`);
-  
-      console.log('✅ Ratings table recreated with ON DELETE CASCADE');
+      console.log('✅ Ratings table dropped and recreated with ON DELETE CASCADE');
     } catch (err) {
-      console.error('❌ Failed to rebuild Ratings table:', err);
+      console.error('❌ Failed to recreate Ratings table:', err);
     }
   })();
 
