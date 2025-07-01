@@ -93,9 +93,12 @@ sequelize.sync({ alter: true }).then(() => {
 
 (async () => {
     try {
-      // 1. Create new table with ON DELETE CASCADE
+      // Drop new table if exists (clean slate)
+      await sequelize.query(`DROP TABLE IF EXISTS Ratings_new`);
+  
+      // Create new table with correct schema
       await sequelize.query(`
-        CREATE TABLE IF NOT EXISTS Ratings_new (
+        CREATE TABLE Ratings_new (
           id INTEGER PRIMARY KEY AUTOINCREMENT,
           rating INTEGER,
           recipeId INTEGER,
@@ -103,16 +106,16 @@ sequelize.sync({ alter: true }).then(() => {
         )
       `);
   
-      // 2. Copy data from old Ratings table
+      // Copy data (if the old Ratings table exists and has these columns)
       await sequelize.query(`
         INSERT INTO Ratings_new (id, rating, recipeId)
         SELECT id, rating, recipeId FROM Ratings
       `);
   
-      // 3. Drop old Ratings table
+      // Drop old Ratings table
       await sequelize.query(`DROP TABLE Ratings`);
   
-      // 4. Rename new table to Ratings
+      // Rename new table to Ratings
       await sequelize.query(`ALTER TABLE Ratings_new RENAME TO Ratings`);
   
       console.log('✅ Ratings table recreated with ON DELETE CASCADE');
