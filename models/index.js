@@ -26,6 +26,10 @@ Recipe.hasMany(Image, {
   onDelete: 'CASCADE'});
 Image.belongsTo(Recipe, { foreignKey: 'recipeId' });
 
+Rating.hasMany(Recipe, {
+  foreignKey: 'recipeId',
+  onDelete: 'CASCADE'
+})
 Rating.belongsTo(Recipe, { foreignKey: 'recipeId' });
 
 module.exports = {
